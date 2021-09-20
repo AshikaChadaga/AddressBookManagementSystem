@@ -1,14 +1,9 @@
 package com.bridgelabz.addressbookmanagementsystem;
 
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.function.Consumer;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class AddressBookDirectory {
 	
@@ -108,7 +103,7 @@ public class AddressBookDirectory {
 		for(AddressBook addressBook : addressBookDirectory.values()) {
 			ArrayList<ContactPerson> contactList = addressBook.getContact();
 			contactList.stream()
-				.filter(person -> person.getFirstName().equals(personName) && person.getAddress().getCity().equals(cityName))
+				.filter(person -> person.getFirstName().equals(personName) && person.getCity().equals(cityName))
 				.forEach(person -> System.out.println(person));
 			
 		}		
@@ -124,7 +119,7 @@ public class AddressBookDirectory {
 		for(AddressBook addressBook : addressBookDirectory.values()) {
 			ArrayList<ContactPerson> contactList = ((AddressBook) addressBook).getContact();
 			contactList.stream()
-				.filter(person -> person.getFirstName().equals(personName) && person.getAddress().getState().equals(stateName))
+				.filter(person -> person.getFirstName().equals(personName) && person.getState().equals(stateName))
 				.forEach(person -> System.out.println(person));
 			
 		}
@@ -138,7 +133,7 @@ public class AddressBookDirectory {
 		
 		listToDisplay.values().stream()
 			.map(region -> region.stream()
-				.filter(person -> person.getAddress().getState().equals(regionName) || person.getAddress().getCity().equals(regionName)))
+				.filter(person -> person.getState().equals(regionName) || person.getCity().equals(regionName)))
 				.forEach(person -> person.forEach(personDetails -> System.out.println(personDetails)));
 	}
 	
@@ -149,7 +144,7 @@ public class AddressBookDirectory {
 		
 		long countPeople = listToDisplay.values().stream()
 				.map(region -> region.stream()
-					.filter(person -> person.getAddress().getState().equals(regionName) || person.getAddress().getCity().equals(regionName)))
+					.filter(person -> person.getState().equals(regionName) || person.getCity().equals(regionName)))
 					.count();
 					
 		System.out.println("Number of People residing in " + regionName+" are: "+countPeople+"\n");
