@@ -3,6 +3,8 @@ package com.bridgelabz.addressbookmanagementsystem;
 import java.util.List;
 import java.util.Scanner;
 
+import com.bridgelabz.addressbookmanagementsystem.AddressBook.IOService;
+
 
 public interface AddressBookIF {
 
@@ -25,4 +27,8 @@ public interface AddressBookIF {
 	public void printSortedList(List<ContactPerson> sortedContactList);
 
 	public void sortAddressBook(int sortingChoice);
+	
+	public void writeToAddressBookFile(IOService ioService);
+
+	public List<String> readDataFromFile(IOService fileIo);
 }
