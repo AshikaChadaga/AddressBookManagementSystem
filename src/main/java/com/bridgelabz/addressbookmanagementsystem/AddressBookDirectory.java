@@ -1,17 +1,18 @@
 package com.bridgelabz.addressbookmanagementsystem;
 
+import java.io.IOException; 
 import java.util.ArrayList; 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class AddressBookDirectory {
+public class AddressBookDirectory implements AddressBookDirectoryIF{
 	
 	public AddressBook addressBook;
 	Scanner scannerObject = new Scanner(System.in);
 	Map<String,AddressBook> addressBookDirectory = new HashMap<String,AddressBook>();
 	
-
+	@Override
 	public void operationDirectory() {
 
 		boolean moreChanges = true;
@@ -19,7 +20,7 @@ public class AddressBookDirectory {
 
 			System.out.println("\nChoose the operation on the Directory you want to perform");
 			System.out.println(
-					"1.Add an Address Book\n2.Edit Existing Address Book\n3.Search Person By Region\n4.View People By Region\n5.Count People By Region\n6.Display Address book Directory\n7.Exit Address book System");
+					"1.Add an Address Book\n2.Edit Existing Address Book\n3.Search Person By Region\n4.View People By Region\n5.Count People By Region\n6.Display Address book Directory\n7.Read From Json\n8.Exit Address book System");
 
 			switch (scannerObject.nextInt()) {
 			case 1:
@@ -56,13 +57,17 @@ public class AddressBookDirectory {
 				displayDirectoryContents();
 				break;
 			case 7:
+				readDataFromJson();
+				break;
+			case 8:
 				moreChanges = false;
 				System.out.println("Exiting Address Book Directory !");
 			}
 
 		} while (moreChanges);
 	}
-
+	
+	@Override
 	public void addAddressBook() {
 
 		System.out.println("Enter the name of the Address Book you want to add");
@@ -77,7 +82,8 @@ public class AddressBookDirectory {
 		addressBookDirectory.put(bookNameToAdd, addressBook);
 
 	}
-
+	
+	@Override
 	public void editAddressBook() {
 
 		System.out.println("Enter the Name of the Address Book which you want to edit:");
@@ -93,6 +99,7 @@ public class AddressBookDirectory {
 
 	}
 	
+	@Override
 	public void searchByCity() {
 		
 		System.out.println("Enter the name of the City where the Person resides : ");
@@ -109,6 +116,7 @@ public class AddressBookDirectory {
 		}		
 	}
 	
+	@Override
 	public void searchByState() {
 		
 		System.out.println("Enter the name of the State where the Person resides : ");
@@ -126,6 +134,7 @@ public class AddressBookDirectory {
 
 	}
 	
+	@Override
 	public void displayPeopleByRegion(HashMap<String, ArrayList<ContactPerson>> listToDisplay) {
 
 		System.out.println("Enter the name of the region :");
@@ -137,6 +146,7 @@ public class AddressBookDirectory {
 				.forEach(person -> person.forEach(personDetails -> System.out.println(personDetails)));
 	}
 	
+	@Override
 	public void countPeopleByRegion(HashMap<String, ArrayList<ContactPerson>> listToDisplay) {
 
 		System.out.println("Enter the name of the region :");
@@ -151,6 +161,7 @@ public class AddressBookDirectory {
 		
 	}
 	
+	@Override
 	public void displayDirectoryContents() {
 
 		System.out.println("----- Contents of the Address Book Directory-----");
@@ -159,5 +170,23 @@ public class AddressBookDirectory {
 				System.out.println(eachBookName);
 		}
 		System.out.println("-----------------------------------------");
+	}
+	
+	@Override
+	public void readDataFromJson() {
+		
+		System.out.println("{");
+		for(AddressBook addressBook : addressBookDirectory.values()) {
+			System.out.println(addressBook.getAddressBookName()+": [\n");
+			try {
+				addressBook.readDataFromJson();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("]\n");
+			
+		}
+		System.out.println("}");
+		
 	}
 }
