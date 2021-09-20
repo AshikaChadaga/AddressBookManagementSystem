@@ -20,4 +20,6 @@ public interface AddressBookDirectoryIF {
 	public void displayPeopleByRegion(HashMap<String, ArrayList<ContactPerson>> listToDisplay);
 
 	public void countPeopleByRegion(HashMap<String, ArrayList<ContactPerson>> listToDisplay);
+	
+	public void readDataFromJson();
 }
