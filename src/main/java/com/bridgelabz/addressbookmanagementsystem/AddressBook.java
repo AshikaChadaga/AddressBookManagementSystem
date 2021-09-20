@@ -1,11 +1,14 @@
 package com.bridgelabz.addressbookmanagementsystem;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.bean.StatefulBeanToCsv;
@@ -54,33 +58,40 @@ public class AddressBook implements AddressBookIF {
 
 			System.out.println("\nChoose the operation you want to perform");
 			System.out.println(
-					"1.Add To Address Book\n2.Edit Existing Entry\n3.Delete Contact\n4.Display Address book\n5.Display Sorted Address Book By Custom Criteria\n6.Write To File\n7.Read Form File\n8.Write Data To CSV File\n9.Read Data From CSV File\n10.Exit Address book System");
+					"1.Add To Address Book\n2.Edit Existing Entry\n3.Delete Contact\n4.Display Address book\n5.Display Sorted Address Book By Custom Criteria\n6.Write To File\n7.Read Form File\n8.Write Data To CSV File\n9.Read Data From CSV File\n10.Write Data To JSON\n11.Read Data From JSON\n12.Exit Address book System");
 
 			switch (scannerObject.nextInt()) {
 			case 1:
 				createContactPerson(scannerObject);
 				break;
+				
 			case 2:
 				editPerson();
 				break;
+				
 			case 3:
 				deletePerson();
 				break;
+				
 			case 4:
 				writeToAddressBookFile(IOService.CONSOLE_IO);
 				break;
+				
 			case 5:
 				System.out.println("What Criteria Do You Want Address Book To Be Sorted In ?");
 				System.out.println("1.FirstName\n2.City\n3.State\n4.Zip Code");
 				int sortingChoice = scannerObject.nextInt();
 				sortAddressBook(sortingChoice);
 				break;
+				
 			case 6: 
 				writeToAddressBookFile(IOService.FILE_IO);
 				break;
+				
 			case 7:
 				readDataFromFile(IOService.FILE_IO);
 				break;
+				
 			case 8:
 				try {
                     writeDataToCSV();
@@ -88,6 +99,7 @@ public class AddressBook implements AddressBookIF {
                     e.printStackTrace();
                 }
 				break;
+				
 			case 9:
 				try {
                     readDataFromCSV();
@@ -95,7 +107,26 @@ public class AddressBook implements AddressBookIF {
                     e.printStackTrace();
                 }
                 break;
+                
 			case 10:
+				try {
+					writeDataToJson();
+				}
+				catch(IOException e) {
+					e.printStackTrace();
+				}
+				break;
+				
+			case 11:
+				try {
+					readDataFromJson();
+				}
+				catch(IOException e) {
+					e.printStackTrace();
+				}
+				break;
+				
+			case 12:
 				moreChanges = false;
 				System.out.println("Exiting Address Book: "+this.getAddressBookName()+" !");
 
@@ -353,7 +384,8 @@ public class AddressBook implements AddressBookIF {
 		}
 		return employeePayrollFromFile;
 	}
-
+	
+	@Override
 	public void writeDataToCSV() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
 		
 		String fileName = "./"+this.getAddressBookName()+"Contacts.csv";
@@ -370,7 +402,8 @@ public class AddressBook implements AddressBookIF {
             e.printStackTrace();
         }
     }
-
+	
+	@Override
     public <CsvValidationException extends Throwable> void readDataFromCSV() throws IOException, CsvValidationException {
     	
     	String fileName = "./"+this.getAddressBookName()+"Contacts.csv";
@@ -387,6 +420,43 @@ public class AddressBook implements AddressBookIF {
                 System.out.println("Phone Number = " + nextRecord[4]);
                 System.out.println("Zip Code = " + nextRecord[6]);
                 System.out.println("\n");
+            }
+        }
+    }
+    
+	@Override
+	public void writeDataToJson() throws IOException {
+		
+		String fileName = "./" + this.getAddressBookName() + "Contacts.json";
+		Path filePath = Paths.get(fileName);
+		Gson gson = new Gson();
+		String json = gson.toJson(contactList.values());
+		FileWriter writer = new FileWriter(String.valueOf(filePath));
+		writer.write(json);
+		writer.close();
+
+	}
+
+	@Override
+    public void readDataFromJson() throws IOException {
+    	
+        ArrayList<ContactPerson> contactList;
+        String fileName = "./"+this.getAddressBookName()+"Contacts.json";
+        Path filePath = Paths.get(fileName);
+        
+        try (Reader reader = Files.newBufferedReader(filePath)) {
+            Gson gson = new Gson();
+            contactList = new ArrayList<>(Arrays.asList(gson.fromJson(reader, ContactPerson[].class)));
+            for (ContactPerson contact : contactList) {
+            	System.out.println("{");
+                System.out.println("Firstname : " + contact.getFirstName());
+                System.out.println("Lastname : " + contact.getLastName());
+                System.out.println("City : " + contact.getCity());
+                System.out.println("State : " + contact.getState());
+                System.out.println("Zip Code : " + contact.getZip());
+                System.out.println("Phone number : " + contact.getPhoneNumber());
+                System.out.println("Email : " + contact.getEmail());
+                System.out.println("}\n");
             }
         }
     }
