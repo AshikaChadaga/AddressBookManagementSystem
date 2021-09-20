@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-
 public class AddressBook implements AddressBookIF {
 
 	Scanner scannerObject = new Scanner(System.in);
@@ -17,6 +16,10 @@ public class AddressBook implements AddressBookIF {
 	public static HashMap<String, ArrayList<ContactPerson>> personByState = new HashMap<String, ArrayList<ContactPerson>>();
 	public String addressBookName;
 	public boolean isPresent = false;
+	
+	public enum IOService {
+		CONSOLE_IO, FILE_IO
+	}
 	
 	public String getAddressBookName() {
 		return addressBookName;
@@ -39,7 +42,7 @@ public class AddressBook implements AddressBookIF {
 
 			System.out.println("\nChoose the operation you want to perform");
 			System.out.println(
-					"1.Add To Address Book\n2.Edit Existing Entry\n3.Delete Contact\n4.Display Address book\n5.Display Sorted Address Book By Custom Criteria\n6.Exit Address book System");
+					"1.Add To Address Book\n2.Edit Existing Entry\n3.Delete Contact\n4.Display Address book\n5.Display Sorted Address Book By Custom Criteria\n6.Write To File\n7.Read Form File\n8.Exit Address book System");
 
 			switch (scannerObject.nextInt()) {
 			case 1:
@@ -52,7 +55,7 @@ public class AddressBook implements AddressBookIF {
 				deletePerson();
 				break;
 			case 4:
-				displayContents();
+				writeToAddressBookFile(IOService.CONSOLE_IO);
 				break;
 			case 5:
 				System.out.println("What Criteria Do You Want Address Book To Be Sorted In ?");
@@ -60,7 +63,13 @@ public class AddressBook implements AddressBookIF {
 				int sortingChoice = scannerObject.nextInt();
 				sortAddressBook(sortingChoice);
 				break;
-			case 6:
+			case 6: 
+				writeToAddressBookFile(IOService.FILE_IO);
+				break;
+			case 7:
+				readDataFromFile(IOService.FILE_IO);
+				break;
+			case 8:
 				moreChanges = false;
 				System.out.println("Exiting Address Book: "+this.getAddressBookName()+" !");
 
@@ -69,6 +78,7 @@ public class AddressBook implements AddressBookIF {
 		} while (moreChanges);
 	}
 	
+	@Override
 	public void createContactPerson(Scanner scannerObject) {
 		
 		ContactPerson person = new ContactPerson();
@@ -127,7 +137,7 @@ public class AddressBook implements AddressBookIF {
 
 	}
 	
-		
+	@Override	
 	public void addPersonToCity(ContactPerson contact) {
 		if (personByCity.containsKey(contact.getAddress().getCity())) {
 			personByCity.get(contact.getAddress().getCity()).add(contact);
@@ -138,7 +148,8 @@ public class AddressBook implements AddressBookIF {
 			personByCity.put(contact.getAddress().getCity(), cityList);
 		}
 	}
-
+	
+	@Override
 	public void addPersonToState(ContactPerson contact) {
 		if (personByState.containsKey(contact.getAddress().getState())) {			
 			personByState.get(contact.getAddress().getState()).add(contact);
@@ -149,7 +160,8 @@ public class AddressBook implements AddressBookIF {
 			personByState.put(contact.getAddress().getState(), stateList);
 		}
 	}
-
+	
+	@Override
 	public void editPerson() {
 		
 		ContactPerson person = new ContactPerson();
@@ -232,6 +244,7 @@ public class AddressBook implements AddressBookIF {
 
 	}
 	
+	@Override
 	public void printSortedList(List<ContactPerson> sortedContactList) {
 		System.out.println("------ Sorted Address Book "+this.getAddressBookName()+" ------");
 		Iterator iterator = sortedContactList.iterator();
@@ -242,6 +255,7 @@ public class AddressBook implements AddressBookIF {
 		System.out.println("-----------------------------------------");
 	}
 	
+	@Override
 	public void sortAddressBook(int sortingChoice) {
 		List<ContactPerson> sortedContactList;
 		
@@ -273,5 +287,50 @@ public class AddressBook implements AddressBookIF {
 		}
 				
 	}
+	
+	@Override
+	public void writeToAddressBookFile(IOService ioService) {
+		if(ioService.equals(IOService.CONSOLE_IO))
+			displayContents();
+		
+		else if(ioService.equals(IOService.FILE_IO)) {
+			String bookName = this.getAddressBookName();
+			String fileName = bookName+".txt";
+			new AddressBookFileIO().writeToAddressBookFile(fileName, contactList);
+		}
+	}
+	
+	public void printData(IOService fileIo) {
+		String bookName = this.getAddressBookName();
+		String fileName = bookName+".txt";
+		if(fileIo.equals(IOService.FILE_IO)) new AddressBookFileIO().printData(fileName);
+	}
+
+
+	public long countEntries(IOService fileIo) {
+		
+		String bookName = this.getAddressBookName();
+		String fileName = bookName+".txt";
+		if(fileIo.equals(IOService.FILE_IO)) 
+			return new AddressBookFileIO().countEntries(fileName);
+		
+		return 0;
+	}
+	
+	@Override
+	public List<String> readDataFromFile(IOService fileIo) {
+		
+		List<String> employeePayrollFromFile = new ArrayList<String>();
+		if(fileIo.equals(IOService.FILE_IO)) {
+			System.out.println("Employee Details from payroll-file.txt");
+			String bookName = this.getAddressBookName();
+			String fileName = bookName+".txt";
+			employeePayrollFromFile = new AddressBookFileIO().readDataFromFile(fileName);
+			
+		}
+		return employeePayrollFromFile;
+	}
+
+
 
 }
