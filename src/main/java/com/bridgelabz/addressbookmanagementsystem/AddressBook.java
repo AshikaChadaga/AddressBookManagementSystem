@@ -58,7 +58,7 @@ public class AddressBook implements AddressBookIF {
 
 			System.out.println("\nChoose the operation you want to perform");
 			System.out.println(
-					"1.Add To Address Book\n2.Edit Existing Entry\n3.Delete Contact\n4.Display Address book\n5.Display Sorted Address Book By Custom Criteria\n6.Write To File\n7.Read Form File\n8.Write Data To CSV File\n9.Read Data From CSV File\n10.Write Data To JSON\n11.Read Data From JSON\n12.Exit Address book System");
+					"1.Add To Address Book\n2.Edit Existing Entry\n3.Delete Contact\n4.Display Address book\n5.Display Sorted Address Book By Custom Criteria\n6.Write To File\n7.Read From File\n8.Write Data To CSV File\n9.Read Data From CSV File\n10.Write Data To JSON\n11.Read Data From JSON\n12.Exit Address book System");
 
 			switch (scannerObject.nextInt()) {
 			case 1:
